@@ -1,26 +1,109 @@
-<template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
-</template>
+<script setup>
 
-<script>
-import HelloWorld from './components/HelloWorld.vue'
+    import {ref} from 'vue'
+    const newTask = ref('')
+    const completedTasks = ref(0)
+    const remainingTasks = ref(0)
+    const tasks = ref([])
+    let task_id = 1
 
-export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
+    const create = () => {
+        tasks.value.push({
+            task_id: task_id++,
+            name: newTask.value,
+            is_completed: false
+        })
+        newTask.value = ''
+        remainingTasks.value = tasks.value.filter(task => task.is_completed === false).length
+    }
+
+    const completeTask = (task) => {
+        task.is_completed = !task.is_completed
+        completedTasks.value = tasks.value.filter(task => task.is_completed === true).length
+        remainingTasks.value = tasks.value.filter(task => task.is_completed === false).length
+    }
+
+
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+
+<template>
+    <v-app>
+        <v-main>
+            <v-container class="text-center w-50">
+                <h1>To Do List</h1>
+                <v-text-field
+                    v-model="newTask"
+                    @keydown.enter="create"
+                    label="What are you working on?">
+                
+                    <template v-slot:append-inner>
+                        <v-fade-transition>
+                            <v-tooltip text="Creates a new task">
+                                <template v-slot:activator="{ props }">
+                                    <v-btn icon="mdi-plus" size="x-small" v-bind="props" v-show="newTask" @click="create" ></v-btn>
+                                </template>
+                            </v-tooltip>
+                        </v-fade-transition>
+                    </template>
+                
+                </v-text-field>
+                <!-- <h1>Tasks: 
+                    <v-fade-transition leave-absolute>
+                        <span :key="`${tasks.length}`">
+                            {{tasks.length}}
+                        </span>
+                    </v-fade-transition>
+                </h1> -->
+                <v-divider/>
+                <v-row class="mt-3">
+                    <v-col-3 class="mx-3">
+                        Remaining: 
+                        <v-fade-transition leave-absolute>
+                            <span :key="remainingTasks" class="text-red">
+                                {{ remainingTasks }}
+                            </span>
+                        </v-fade-transition>
+                    </v-col-3>
+                    <v-divider vertical/>
+                    <v-col-3 class="ms-3">
+                        Completed: 
+                        <v-fade-transition leave-absolute>
+                            <span :key="completedTasks" class="text-success">
+                                {{ completedTasks }}
+                            </span>
+                        </v-fade-transition>
+                    </v-col-3>
+                    <v-spacer/>
+                        <v-progress-circular v-show="tasks.length > 0" class="me-3" color="success" :model-value="(completedTasks / tasks.length) * 100 ">
+                        </v-progress-circular>
+                </v-row>
+                <v-divider class="mt-5"/>
+
+                <v-card class="mt-4" v-show="tasks.length > 0">
+
+                    <v-slide-y-transition group>
+                                <div v-for="task in tasks" :key="task.task_id">
+                                    <v-hover v-slot="{isHovering, props}">
+                                        <v-divider/>
+                                        <v-list-item :class="isHovering ? 'bg-grey-lighten-3' : ''" v-bind="props">
+                                                    <v-checkbox-btn @click="completeTask(task)" :label="task.name" :class="task.is_completed ? 'text-grey' : 'text-black'">
+                                                    </v-checkbox-btn>
+                                            <template v-slot:append>
+                                                <v-fade-transition>
+                                                    <v-icon color="success" v-show="task.is_completed"> mdi-check </v-icon>
+                                                </v-fade-transition>
+                                            </template>
+                                        </v-list-item>
+                                    </v-hover>
+                                </div>
+                    </v-slide-y-transition>
+
+                </v-card>
+
+            </v-container>
+        </v-main>
+    </v-app>
+</template>
+
+
