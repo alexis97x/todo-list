@@ -1,11 +1,26 @@
 <script setup>
 
     import {ref} from 'vue'
+    import axios from 'axios'
     const newTask = ref('')
     const completedTasks = ref(0)
     const remainingTasks = ref(0)
     const tasks = ref([])
     let task_id = 1
+    const quote = ref('')
+    const author = ref('')
+
+    axios.get('https://api.api-ninjas.com/v1/quotes?category=success', {
+        headers: {
+            //YOUR API NINJA API KEY idk if its safe to paste my api key here?
+            'X-Api-Key': 'd6/WVsvKqOAyv/a10rxNLw==Fjfg95hQ6NwryCOj'
+        }
+    })
+    .then(response => {
+
+        quote.value = response.data[0].quote
+        author.value = response.data[0].author
+    })
 
     const create = () => {
         tasks.value.push({
@@ -31,7 +46,14 @@
     <v-app>
         <v-main>
             <v-container class="text-center w-50">
-                <h1>To Do List</h1>
+                <v-container>
+                    <h4>
+                        <i>{{quote}}</i>
+                    </h4>
+                    <p class="text-end mr-4">
+                        {{ '-'+author }}
+                    </p>
+                </v-container>
                 <v-text-field
                     v-model="newTask"
                     @keydown.enter="create"
