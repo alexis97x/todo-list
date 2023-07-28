@@ -9,6 +9,7 @@
     let task_id = 1
     const quote = ref('')
     const author = ref('')
+    const loading = ref(true)
 
     axios.get('https://api.api-ninjas.com/v1/quotes?category=success', {
         headers: {
@@ -20,6 +21,7 @@
 
         quote.value = response.data[0].quote
         author.value = response.data[0].author
+        loading.value = false
     })
 
     const create = () => {
@@ -54,6 +56,11 @@
                         <p class="text-end mr-4">
                             {{ '-'+author }}
                         </p>
+                            <v-progress-circular
+                            indeterminate
+                            v-show="loading"
+                            color="grey"
+                            ></v-progress-circular>
                     </v-container>
                     <v-text-field
                         v-model="newTask"
@@ -86,9 +93,7 @@
                     <v-divider />
                     <v-row class="mt-3">
                         <v-col
-                            cols="12"
-                            sm="6"
-                            md="4"
+                            cols="4"
                             class="my-2"
                         >
                             Remaining: 
@@ -100,9 +105,7 @@
                         </v-col>
                         <v-divider vertical class="my-2" />
                         <v-col
-                            cols="12"
-                            sm="6"
-                            md="4"
+                            cols="4"
                             class="my-2"
                         >
                             Completed: 
@@ -113,9 +116,7 @@
                             </v-fade-transition>
                         </v-col>
                         <v-col
-                            cols="12"
-                            sm="12"
-                            md="4"
+                            cols="4"
                         >
                             <v-progress-circular
                                 v-show="tasks.length > 0"
