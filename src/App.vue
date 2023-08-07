@@ -10,7 +10,7 @@
     const quote = ref('')
     const author = ref('')
     const loading = ref(true)
-
+//e
     axios.get('https://api.api-ninjas.com/v1/quotes?category=success', {
         headers: {
             //YOUR API NINJA API KEY idk if its safe to paste my api key here?
